@@ -49,7 +49,7 @@ import { useEffect, useState } from "react";
 type Tab = "explore" | "search" | "map" | "saved" | "profile";
 type SearchSort = "Trending" | "A-Z" | "Highest offer" | "Newest" | "Nearest";
 type WorkTrack = "creator" | "bd" | "marketing" | "campus";
-type AccountPageKey = "personal" | "savings" | "membership" | "gifts" | "settings" | "help" | "feedback" | "legal";
+type AccountPageKey = "personal" | "savings" | "earnings" | "membership" | "gifts" | "settings" | "help" | "feedback" | "legal";
 
 type Deal = {
   id: number;
@@ -105,6 +105,24 @@ const categories = [
   { name: "Internships", search: "internship", icon: BriefcaseBusiness, image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=500&q=88" },
   { name: "Freelance", search: "freelance", icon: Laptop, image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=500&q=88" },
 ];
+
+const categoryDetails = {
+  Dining: { icon: Utensils, image: categories[0].image, description: "Meals, quick bites and student-friendly tables around Kochi.", match: ["dining", "food", "restaurant", "meal", "biryani"], subcategories: [{ label: "All", terms: [] }, { label: "Meals", terms: ["meal", "lunch", "dinner"] }, { label: "Biryani", terms: ["biryani"] }, { label: "Fast food", terms: ["burger", "chicken", "fast"] }, { label: "Under ₹100", terms: ["under 100", "₹99", "₹89"] }] },
+  Cafes: { icon: Coffee, image: categories[1].image, description: "Coffee, breakfast and good places to study or catch up.", match: ["cafes", "cafe", "coffee", "breakfast"], subcategories: [{ label: "All", terms: [] }, { label: "Coffee", terms: ["coffee"] }, { label: "Breakfast", terms: ["breakfast", "brunch"] }, { label: "Study friendly", terms: ["study", "student"] }, { label: "Desserts", terms: ["dessert", "cake"] }] },
+  Beauty: { icon: Sparkles, image: categories[2].image, description: "Salon, self-care and wellness offers without the full-price guilt.", match: ["beauty", "salon", "spa", "skincare", "hair"], subcategories: [{ label: "All", terms: [] }, { label: "Hair", terms: ["hair", "salon"] }, { label: "Nails", terms: ["nail", "manicure"] }, { label: "Spa", terms: ["spa", "massage"] }, { label: "Skincare", terms: ["skin", "beauty"] }] },
+  Fitness: { icon: Dumbbell, image: categories[3].image, description: "Gyms, sports and beginner-friendly ways to get moving.", match: ["fitness", "gym", "sports", "workout", "training"], subcategories: [{ label: "All", terms: [] }, { label: "Gyms", terms: ["gym", "strength"] }, { label: "Sports", terms: ["sports", "padel"] }, { label: "Classes", terms: ["class", "training", "coached"] }, { label: "Free trials", terms: ["free", "trial"] }] },
+  "Things to do": { icon: Compass, image: categories[4].image, description: "Easy plans for dates, groups and weekends worth remembering.", match: ["things to do", "experience", "activity", "tour", "outdoor"], subcategories: [{ label: "All", terms: [] }, { label: "Adventure", terms: ["adventure", "kayak", "cycling"] }, { label: "Workshops", terms: ["workshop", "pottery", "clay"] }, { label: "Tours", terms: ["tour", "walk", "cruise"] }, { label: "Water", terms: ["water", "pool", "kayak"] }] },
+  Staycations: { icon: CalendarDays, image: categories[5].image, description: "Short Kerala escapes, pool days and slow weekends nearby.", match: ["staycations", "staycation", "hotel", "resort", "stay"], subcategories: [{ label: "All", terms: [] }, { label: "City stays", terms: ["city", "hotel", "kochi"] }, { label: "Beach", terms: ["beach", "cherai"] }, { label: "Backwaters", terms: ["backwater", "kumbalangi"] }, { label: "Pool day", terms: ["pool", "day pass"] }] },
+  Shopping: { icon: Store, image: categories[6].image, description: "Fashion, tech and useful finds with member-only prices.", match: ["shopping", "fashion", "retail", "tech", "store"], subcategories: [{ label: "All", terms: [] }, { label: "Fashion", terms: ["fashion", "clothes", "thread"] }, { label: "Tech", terms: ["tech", "electronics", "gadget"] }, { label: "Local", terms: ["local", "kochi"] }, { label: "Accessories", terms: ["accessories"] }] },
+  Entertainment: { icon: Clapperboard, image: categories[7].image, description: "Cinema, gaming and fun plans for when the group chat agrees.", match: ["entertainment", "cinema", "movie", "gaming", "events"], subcategories: [{ label: "All", terms: [] }, { label: "Cinema", terms: ["cinema", "movie", "ticket"] }, { label: "Gaming", terms: ["gaming", "arcade", "game"] }, { label: "Events", terms: ["event"] }, { label: "For groups", terms: ["friends", "team", "group"] }] },
+  Travel: { icon: Plane, image: categories[8].image, description: "Flights, weekend trips and practical ways to see more for less.", match: ["travel", "trip", "flight", "holiday", "tour"], subcategories: [{ label: "All", terms: [] }, { label: "Weekend trips", terms: ["weekend", "short-break"] }, { label: "Flights", terms: ["flight", "airport", "fare"] }, { label: "Road trips", terms: ["road", "rental", "drive"] }, { label: "Tours", terms: ["tour", "holiday"] }] },
+  Learn: { icon: GraduationCap, image: categories[9].image, description: "Short courses and practical skills that move your profile forward.", match: ["learn", "course", "skills", "workshop", "career"], subcategories: [{ label: "All", terms: [] }, { label: "Free", terms: ["free"] }, { label: "Career skills", terms: ["career", "portfolio"] }, { label: "Design", terms: ["design"] }, { label: "Online", terms: ["online", "remote"] }] },
+  Internships: { icon: BriefcaseBusiness, image: categories[10].image, description: "Student-friendly internships, including opportunities with Kouponly.", match: ["internship", "internships", "intern", "trainee"], subcategories: [{ label: "All", terms: [] }, { label: "Marketing", terms: ["marketing"] }, { label: "Sales", terms: ["sales", "business development"] }, { label: "Design", terms: ["design", "product"] }, { label: "Remote", terms: ["remote", "hybrid"] }] },
+  Freelance: { icon: Laptop, image: categories[11].image, description: "Local and remote gigs for creators, designers and student talent.", match: ["freelance", "creator", "ugc", "gig", "project"], subcategories: [{ label: "All", terms: [] }, { label: "UGC", terms: ["ugc", "creator", "video"] }, { label: "Design", terms: ["design", "logo", "graphics"] }, { label: "Video", terms: ["video", "social"] }, { label: "Photography", terms: ["photo", "shoot"] }] },
+  Jobs: { icon: BriefcaseBusiness, image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=500&q=88", description: "Flexible part-time and entry-level roles across Kochi and Kerala.", match: ["job", "part-time", "trainee", "work"], subcategories: [{ label: "All", terms: [] }, { label: "Part-time", terms: ["part-time", "weekend"] }, { label: "Remote", terms: ["remote", "hybrid"] }, { label: "Retail", terms: ["retail", "store"] }, { label: "Events", terms: ["event", "crew"] }] },
+};
+
+type CategoryName = keyof typeof categoryDetails;
 
 const deals: Deal[] = [
   { id: 1, name: "Paragon Restaurant", place: "Lulu Mall, Edappally", category: "Dining", distance: "2.1 km", distanceKm: 2.1, rating: "4.8", offer: "Buy one biryani, get one free", saving: "Save up to ₹480", offerValue: 480, newest: 15, trend: 99, image: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=900&q=90", color: "#ffe8de", description: "A Kerala favourite for biryani, seafood and generous family meals." },
@@ -288,6 +306,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<Tab>("explore");
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
   const [selectedListing, setSelectedListing] = useState<DirectoryItem | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryName | null>(null);
   const [workOpen, setWorkOpen] = useState(false);
   const [workTrack, setWorkTrack] = useState<WorkTrack>("creator");
   const [accountPage, setAccountPage] = useState<AccountPageKey | null>(null);
@@ -320,6 +339,7 @@ export default function HomePage() {
   const changeTab = (tab: Tab) => {
     setSelectedDeal(null);
     setSelectedListing(null);
+    setSelectedCategory(null);
     setWorkOpen(false);
     setAccountPage(null);
     setActiveTab(tab);
@@ -330,6 +350,14 @@ export default function HomePage() {
     setSearchFilter("All");
     setSearchSort("Trending");
     changeTab("search");
+  };
+
+  const openCategory = (category: CategoryName) => {
+    setSelectedCategory(category);
+    setSelectedDeal(null);
+    setSelectedListing(null);
+    setAccountPage(null);
+    setWorkOpen(false);
   };
 
   const openDirectoryItem = (item: DirectoryItem) => {
@@ -375,10 +403,12 @@ export default function HomePage() {
           ) : accountPage ? (
             <AccountPage page={accountPage} onBack={() => setAccountPage(null)} notify={notify} />
           ) : workOpen ? (
-            <WorkWithUs initialTrack={workTrack} onBack={() => setWorkOpen(false)} notify={notify} appliedCampaigns={appliedCampaigns} onToggleCampaign={toggleCampaign} />
+            <WorkWithUs initialTrack={workTrack} onBack={() => setWorkOpen(false)} onEarnings={() => setAccountPage("earnings")} notify={notify} appliedCampaigns={appliedCampaigns} onToggleCampaign={toggleCampaign} />
+          ) : selectedCategory ? (
+            <CategoryView category={selectedCategory} onBack={() => setSelectedCategory(null)} onOpen={openDirectoryItem} />
           ) : (
             <>
-              {activeTab === "explore" && <Explore saved={saved} onSelect={setSelectedDeal} onSave={toggleSaved} onTab={changeTab} onSearch={openSearch} onWork={(track = "creator") => { setWorkTrack(track); setWorkOpen(true); }} onAccount={setAccountPage} notify={notify} />}
+              {activeTab === "explore" && <Explore saved={saved} onSelect={setSelectedDeal} onSave={toggleSaved} onTab={changeTab} onSearch={openSearch} onCategory={openCategory} onWork={(track = "creator") => { setWorkTrack(track); setWorkOpen(true); }} onAccount={setAccountPage} notify={notify} />}
               {activeTab === "saved" && <Saved saved={saved} onSelect={setSelectedDeal} onSave={toggleSaved} notify={notify} />}
               {activeTab === "search" && <SearchView query={searchQuery} setQuery={setSearchQuery} filter={searchFilter} setFilter={setSearchFilter} sortBy={searchSort} setSortBy={setSearchSort} onOpen={openDirectoryItem} />}
               {activeTab === "map" && <MapView onSelect={setSelectedDeal} notify={notify} />}
@@ -387,7 +417,7 @@ export default function HomePage() {
           )}
         </div>
 
-        {!selectedDeal && !selectedListing && !accountPage && !workOpen && (
+        {!selectedDeal && !selectedListing && !selectedCategory && !accountPage && !workOpen && (
           <nav className="bottom-nav" aria-label="Primary navigation">
             {tabs.map(({ id, label, icon: Icon }) => (
               <button key={id} className={activeTab === id ? "active" : ""} onClick={() => changeTab(id)} aria-current={activeTab === id ? "page" : undefined}>
@@ -402,11 +432,12 @@ export default function HomePage() {
   );
 }
 
-function Explore({ saved, onSelect, onSave, onTab, onSearch, onWork, onAccount, notify }: { saved: Set<number>; onSelect: (deal: Deal) => void; onSave: (id: number) => void; onTab: (tab: Tab) => void; onSearch: (term?: string) => void; onWork: (track?: WorkTrack) => void; onAccount: (page: AccountPageKey) => void; notify: (message: string) => void }) {
+function Explore({ saved, onSelect, onSave, onTab, onSearch, onCategory, onWork, onAccount, notify }: { saved: Set<number>; onSelect: (deal: Deal) => void; onSave: (id: number) => void; onTab: (tab: Tab) => void; onSearch: (term?: string) => void; onCategory: (category: CategoryName) => void; onWork: (track?: WorkTrack) => void; onAccount: (page: AccountPageKey) => void; notify: (message: string) => void }) {
   const visibleDeals = deals;
   const [heroIndex, setHeroIndex] = useState(0);
   const [homeMode, setHomeMode] = useState<"save" | "play" | "grow">("save");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pathsOpen, setPathsOpen] = useState(false);
   const activeHero = heroSlides[heroIndex];
   useEffect(() => {
     const timer = window.setInterval(() => setHeroIndex((current) => (current + 1) % heroSlides.length), 5000);
@@ -417,7 +448,7 @@ function Explore({ saved, onSelect, onSave, onTab, onSearch, onWork, onAccount, 
     { title: "Kumbalangi sunset", note: "A slow backwater evening", query: "Kumbalangi", image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=600&q=88" },
     { title: "Pottery in Mattancherry", note: "Make something worth keeping", query: "pottery", image: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=600&q=88" },
   ];
-  const modeCategories = homeMode === "save" ? categories.slice(0, 9) : homeMode === "play" ? [categories[4], categories[5], categories[7], categories[0], categories[1], categories[8]] : [categories[9], categories[10], categories[11], { name: "Jobs", search: "job", image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=500&q=88" }];
+  const modeCategories = homeMode === "save" ? categories.slice(0, 9) : homeMode === "play" ? [categories[4], categories[5], categories[7], categories[0], categories[1], categories[8]] : [categories[9], categories[10], categories[11], { name: "Jobs", search: "job", icon: BriefcaseBusiness, image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=500&q=88" }];
   const kouponlyPaths: { title: string; note: string; track: WorkTrack; icon: typeof Clapperboard }[] = [
     { title: "UGC Creator", note: "Paid brand campaigns", track: "creator", icon: Clapperboard },
     { title: "BD & Sales", note: "Paid internship", track: "bd", icon: BriefcaseBusiness },
@@ -446,6 +477,7 @@ function Explore({ saved, onSelect, onSave, onTab, onSearch, onWork, onAccount, 
           <button className="drawer-savings" onClick={() => { setMenuOpen(false); onAccount("savings"); }}><span><small>TOTAL SAVED</small><b>₹2,400</b></span><span><small>REWARDS</small><b>680 pts</b></span><ChevronRight size={18} /></button>
           <nav>
             <button onClick={() => { setMenuOpen(false); onAccount("savings"); }}><BadgePercent size={20} /><span><b>Savings history</b><small>See every saving and redemption</small></span><ChevronRight size={17} /></button>
+            <button onClick={() => { setMenuOpen(false); onAccount("earnings"); }}><WalletCards size={20} /><span><b>Creator earnings</b><small>Paid UGC work and pending payouts</small></span><ChevronRight size={17} /></button>
             <button onClick={() => { setMenuOpen(false); onTab("saved"); }}><Heart size={20} /><span><b>Saved offers</b><small>Your places and discounts</small></span><ChevronRight size={17} /></button>
             <button onClick={() => { setMenuOpen(false); onSearch("partner"); }}><Store size={20} /><span><b>Explore partners</b><small>Browse every Kouponly place</small></span><ChevronRight size={17} /></button>
             <button onClick={() => { setMenuOpen(false); onTab("map"); }}><MapPin size={20} /><span><b>Map near me</b><small>Find offers around Kochi</small></span><ChevronRight size={17} /></button>
@@ -463,8 +495,8 @@ function Explore({ saved, onSelect, onSave, onTab, onSearch, onWork, onAccount, 
       <section className="mode-picker" aria-label="Choose what you want to do">
         <p>Today I want to…</p>
         <div>
-          <button className={homeMode === "save" ? "active" : ""} onClick={() => setHomeMode("save")}><WalletCards size={18} /><span><b>Save</b><small>Deals & offers</small></span></button>
-          <button className={homeMode === "play" ? "active" : ""} onClick={() => setHomeMode("play")}><Sparkles size={18} /><span><b>Go out</b><small>Book & explore</small></span></button>
+          <button className={homeMode === "save" ? "active" : ""} onClick={() => { setHomeMode("save"); setPathsOpen(false); }}><WalletCards size={18} /><span><b>Save</b><small>Deals & offers</small></span></button>
+          <button className={homeMode === "play" ? "active" : ""} onClick={() => { setHomeMode("play"); setPathsOpen(false); }}><Sparkles size={18} /><span><b>Go out</b><small>Book & explore</small></span></button>
           <button className={homeMode === "grow" ? "active" : ""} onClick={() => setHomeMode("grow")}><Rocket size={18} /><span><b>Grow</b><small>Learn & earn</small></span></button>
         </div>
       </section>
@@ -481,9 +513,13 @@ function Explore({ saved, onSelect, onSave, onTab, onSearch, onWork, onAccount, 
 
       {homeMode === "play" && <section className="mode-hero play-hero"><div><span>WEEKEND MODE</span><h3>Your next story starts outside.</h3><p>Book something fun in under a minute.</p><button onClick={() => onSearch("experience")}>Find an experience <ArrowRight size={17} /></button></div><img src="https://images.unsplash.com/photo-1519671282429-b44660ead0a7?auto=format&fit=crop&w=700&q=88" alt="Friends enjoying an outdoor experience" /></section>}
 
-      {homeMode === "grow" && <><section className="mode-hero grow-hero"><div><span>WORK WITH KOUPONLY</span><h3>Your talent. Real briefs. Real experience.</h3><p>Join paid creator campaigns, internships or lead Kouponly on your campus.</p><button onClick={() => onWork()}>See open paths <ArrowRight size={17} /></button></div><div className="grow-orbit"><Clapperboard size={31} /><BriefcaseBusiness size={24} /><GraduationCap size={22} /></div></section><section className="grow-priority"><div><p className="eyebrow coral-text">START WITH US</p><h3>Pick your Kouponly path</h3><span>Built for students and early-career talent in Kerala.</span></div><div>{kouponlyPaths.map(({ title, note, track, icon: Icon }) => <button key={track} onClick={() => onWork(track)}><span><Icon size={19} /></span><b>{title}</b><small>{note}</small><ChevronRight size={15} /></button>)}</div></section></>}
+      {homeMode === "grow" && <><section className="mode-hero grow-hero grow-hero-combined">
+        <div className="grow-hero-intro"><span>WORK WITH KOUPONLY</span><h3>Your talent. Real briefs. Real experience.</h3><p>Join paid creator campaigns, internships or lead Kouponly on your campus.</p><button onClick={() => setPathsOpen((current) => !current)} aria-expanded={pathsOpen}>{pathsOpen ? "Hide paths" : "See open paths"} <ArrowRight size={17} /></button></div>
+        <div className="grow-orbit"><Clapperboard size={31} /><BriefcaseBusiness size={24} /><GraduationCap size={22} /></div>
+      </section>
+      {pathsOpen && <section className="grow-path-reveal" aria-label="Kouponly career paths"><div className="grow-path-reveal-head"><div className="grow-inline-heading"><span>START WITH US</span><b>Pick your Kouponly path</b><small>Built for students and early-career talent in Kerala.</small></div><button onClick={() => setPathsOpen(false)} aria-label="Close Kouponly paths"><X size={17} /></button></div><div className="grow-inline-grid">{kouponlyPaths.map(({ title, note, track, icon: Icon }) => <button key={track} onClick={() => onWork(track)}><span><Icon size={17} /></span><div><b>{title}</b><small>{note}</small></div><ChevronRight size={14} /></button>)}</div></section>}</>}
 
-      <section className="section-block category-hub"><div className="section-heading"><div><p className="eyebrow teal-text">{homeMode === "save" ? "SAVE YOUR WAY" : homeMode === "play" ? "MAKE A PLAN" : "BUILD YOUR FUTURE"}</p><h3>{homeMode === "save" ? "Browse categories" : homeMode === "play" ? "What feels fun?" : "Choose your next step"}</h3></div></div><div className="category-scroll">{modeCategories.map((item) => <button key={item.name} onClick={() => "action" in item && item.action === "work" ? onWork(item.name === "Campus Ambassador" ? "campus" : "creator") : onSearch(item.search)}><img src={item.image} alt="" /><b>{item.name}</b></button>)}</div></section>
+      <section className="section-block category-hub"><div className="section-heading"><div><p className="eyebrow teal-text">{homeMode === "save" ? "SAVE YOUR WAY" : homeMode === "play" ? "MAKE A PLAN" : "BUILD YOUR FUTURE"}</p><h3>{homeMode === "save" ? "Browse categories" : homeMode === "play" ? "What feels fun?" : "Choose your next step"}</h3></div></div><div className="category-scroll">{modeCategories.map((item) => { const Icon = item.icon; return <button key={item.name} onClick={() => onCategory(item.name as CategoryName)} aria-label={`Browse ${item.name}`}><span className="category-art"><img src={item.image} alt="" /><span className="category-icon"><Icon size={15} strokeWidth={2.5} /></span></span><b>{item.name}</b></button>; })}</div></section>
 
       {homeMode === "save" && <section className="section-block vendor-section"><div className="section-heading"><div><p className="eyebrow coral-text">BRANDS YOU KNOW</p><h3>Popular partners</h3></div><button onClick={() => onSearch("partner")}>All partners</button></div><div className="vendor-shelf">{deals.slice(0, 12).map((deal) => <button key={deal.id} onClick={() => onSelect(deal)}><span>{deal.logo ? <img src={deal.logo} alt={`${deal.name} logo`} /> : <img className="vendor-photo" src={deal.image} alt="" />}</span><b>{deal.name}</b><small>{deal.saving}</small></button>)}</div></section>}
 
@@ -503,12 +539,24 @@ function Explore({ saved, onSelect, onSave, onTab, onSearch, onWork, onAccount, 
         </button>
       </section>
 
-      <section className="section-block under-fifty">
-        <div className="section-heading"><div><p className="eyebrow teal-text">EASY ON THE WALLET</p><h3>Good times under ₹500</h3></div></div>
-        <div className="mini-deals">
-          {[deals[1], deals[3], deals[0]].map((deal) => <button key={deal.id} onClick={() => onSelect(deal)}><img src={deal.image} alt="" /><span><b>{deal.name}</b><small>{deal.saving}</small></span></button>)}
-        </div>
-      </section></>}
+      <div className="student-value-stack">
+        <section className="section-block value-section student-exclusive">
+          <div className="section-heading"><div><p className="eyebrow teal-text">FOR STUDENT LIFE</p><h3>Exclusive student deals</h3></div><button onClick={() => onSearch("student")}>See all</button></div>
+          <div className="mini-deals">
+            {[deals[1], deals[11], deals[8]].map((deal) => <button key={deal.id} onClick={() => onSelect(deal)}><img src={deal.image} alt="" /><span><b>{deal.name}</b><small>{deal.saving}</small></span></button>)}
+          </div>
+        </section>
+        <section className="section-block value-section meals-under-hundred">
+          <div className="section-heading"><div><p className="eyebrow teal-text">QUICK BITES, TINY PRICES</p><h3>Meals under ₹100</h3></div><button onClick={() => onSearch("meals under 100")}>See all</button></div>
+          <div className="mini-deals meal-deals">
+            {[
+              { deal: deals[0], name: "Mini Kerala meals", price: "₹99" },
+              { deal: deals[14], name: "Crispy snack box", price: "₹89" },
+              { deal: deals[3], name: "Burger & lime", price: "₹99" },
+            ].map(({ deal, name, price }) => <button key={name} onClick={() => onSelect(deal)}><img src={deal.image} alt="" /><span><b>{name}</b><small>{price}</small></span></button>)}
+          </div>
+        </section>
+      </div></>}
 
       {homeMode === "play" && <><section className="section-block city-section">
         <div className="section-heading"><div><p className="eyebrow coral-text">KERALA, THIS WEEK</p><h3>Go do something fun</h3></div><button onClick={() => onSearch("experience")}>More</button></div>
@@ -558,6 +606,7 @@ function AccountPage({ page, onBack, notify }: { page: AccountPageKey; onBack: (
   const titles: Record<AccountPageKey, { eyebrow: string; title: string; copy: string }> = {
     personal: { eyebrow: "YOUR ACCOUNT", title: "Personal details", copy: "Keep the basics current so your offers and applications stay relevant." },
     savings: { eyebrow: "YOUR IMPACT", title: "Savings history", copy: "A clear record of every Kouponly saving and redemption." },
+    earnings: { eyebrow: "CREATOR WALLET", title: "Your earnings", copy: "Track every UGC payment from approved brief to bank transfer." },
     membership: { eyebrow: "YOUR ACCESS", title: "Membership", copy: "See your current pass and the benefits you can unlock next." },
     gifts: { eyebrow: "SHARE THE GOOD STUFF", title: "Gifts", copy: "Send and receive offers without passing around screenshots." },
     settings: { eyebrow: "MAKE IT YOURS", title: "Preferences", copy: "Choose how Kouponly looks, speaks and keeps you updated." },
@@ -571,6 +620,8 @@ function AccountPage({ page, onBack, notify }: { page: AccountPageKey; onBack: (
     <header><p className="eyebrow coral-text">{heading.eyebrow}</p><h2>{heading.title}</h2><p>{heading.copy}</p></header>
 
     {page === "personal" && <section className="account-card detail-fields"><label><span>Full name</span><b>Neil Jose Pillard</b></label><label><span>Email</span><b>neil.j.pillard@gmail.com</b></label><label><span>Mobile</span><b>+91 98765 43210</b></label><label><span>Home city</span><b>Kochi, Kerala</b></label><button onClick={() => notify("Edit profile form opened")}>Edit details <ChevronRight size={17} /></button></section>}
+
+    {page === "earnings" && <><section className="creator-wallet"><div><small>TOTAL EARNED</small><b>₹12,500</b><p>from 3 completed campaigns</p></div><span><WalletCards size={24} /><small>NEXT PAYOUT</small><b>₹6,000</b><p>Expected 8 Aug</p></span></section><section className="account-card earnings-list"><div className="earnings-list-heading"><h3>Payment activity</h3><span>All time</span></div><button onClick={() => notify("Paragon campaign payment opened")}><span className="earning-brand"><Utensils size={18} /></span><span><b>Paragon dinner Reel</b><small>Paid to bank · 28 Jul</small></span><em className="paid">+₹4,500</em></button><button onClick={() => notify("Nykaa campaign payout details opened")}><span className="earning-brand"><Sparkles size={18} /></span><span><b>Nykaa beauty unboxing</b><small>Approved · payout processing</small></span><em>₹6,000</em></button><button onClick={() => notify("Marriott campaign payment opened")}><span className="earning-brand"><Clapperboard size={18} /></span><span><b>Kochi Marriott pool story</b><small>Paid to bank · 12 Jul</small></span><em className="paid">+₹8,000</em></button></section><section className="earnings-note"><Check size={17} /><div><b>How payouts work</b><p>Once your content is approved and posted, payment is released to your registered bank account.</p></div></section></>}
 
     {page === "savings" && <><section className="savings-overview"><span><small>TOTAL SAVED</small><b>₹2,400</b><p>this month</p></span><span><small>OFFERS USED</small><b>8</b><p>across Kochi</p></span></section><section className="account-card activity-list"><h3>Recent activity</h3><button onClick={() => notify("Paragon redemption details opened")}><span className="activity-icon"><Utensils size={18} /></span><span><b>Paragon Restaurant</b><small>Buy one biryani, get one free · Today</small></span><em>+₹480</em></button><button onClick={() => notify("Starbucks redemption details opened")}><span className="activity-icon"><Coffee size={18} /></span><span><b>Starbucks</b><small>Second handcrafted drink · Jul 28</small></span><em>+₹320</em></button><button onClick={() => notify("PVR redemption details opened")}><span className="activity-icon"><Clapperboard size={18} /></span><span><b>PVR Cinemas</b><small>Two premium tickets · Jul 22</small></span><em>+₹350</em></button></section></>}
 
@@ -610,6 +661,44 @@ function RewardsHub({ notify, onBack }: { notify: (message: string) => void; onB
 }
 
 const directoryTypeLabel = (type: DirectoryItem["type"]) => type === "Vendor" ? "Partner" : type;
+
+function CategoryView({ category, onBack, onOpen }: { category: CategoryName; onBack: () => void; onOpen: (item: DirectoryItem) => void }) {
+  const details = categoryDetails[category];
+  const Icon = details.icon;
+  const [query, setQuery] = useState("");
+  const [subcategory, setSubcategory] = useState("All");
+  const [nearest, setNearest] = useState(false);
+  const normalizedQuery = query.trim().toLowerCase();
+  const activeSubcategory = details.subcategories.find((item) => item.label === subcategory) ?? details.subcategories[0];
+  const itemText = (item: DirectoryItem) => `${item.title} ${item.subtitle} ${item.type} ${item.tag} ${item.keywords} ${item.description}`.toLowerCase();
+  const categoryItems = directoryItems.filter((item) => details.match.some((term) => itemText(item).includes(term.toLowerCase())));
+  const visibleItems = categoryItems.filter((item) => {
+    const haystack = itemText(item);
+    const matchesSearch = !normalizedQuery || normalizedQuery.split(/\s+/).every((term) => haystack.includes(term));
+    const matchesSubcategory = !activeSubcategory.terms.length || activeSubcategory.terms.some((term) => haystack.includes(term.toLowerCase()));
+    return matchesSearch && matchesSubcategory;
+  }).sort((a, b) => nearest ? (a.distance || Number.MAX_SAFE_INTEGER) - (b.distance || Number.MAX_SAFE_INTEGER) : b.trend - a.trend);
+
+  return (
+    <div className="screen category-page">
+      <header className="category-destination-header">
+        <button className="back-button category-back" onClick={onBack} aria-label="Back to home"><ArrowLeft size={20} /></button>
+        <div className="category-hero-copy"><p className="eyebrow">EXPLORE CATEGORY</p><h2>{category}</h2><p>{details.description}</p><span><Icon size={16} /> {categoryItems.length} places & offers</span></div>
+        <img src={details.image} alt="" />
+      </header>
+
+      <label className="search-field category-page-search"><Search size={19} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={`Search in ${category}`} autoComplete="off" />{query && <button type="button" onClick={() => setQuery("")} aria-label="Clear category search"><X size={16} /></button>}</label>
+
+      <button className={`nearest-category ${nearest ? "active" : ""}`} onClick={() => setNearest((current) => !current)} aria-pressed={nearest}><span><Navigation size={17} /></span><div><b>Nearest to me</b><small>{nearest ? "Showing closest first" : "Use your Kochi location"}</small></div><span className="nearest-switch"><i /></span></button>
+
+      <div className="subcategory-row" aria-label={`${category} subcategories`}>{details.subcategories.map((item) => <button key={item.label} className={subcategory === item.label ? "active" : ""} onClick={() => setSubcategory(item.label)}>{item.label}</button>)}</div>
+
+      <div className="category-result-heading"><div><p className="eyebrow">{subcategory === "All" ? "ALL PICKS" : subcategory.toUpperCase()}</p><h3>{visibleItems.length} result{visibleItems.length === 1 ? "" : "s"}</h3></div><span>{nearest ? <><Navigation size={12} /> Closest first</> : "Top rated"}</span></div>
+
+      <section className="directory-list category-directory-list">{visibleItems.map((item) => <button key={item.id} onClick={() => onOpen(item)}><span className={`directory-media ${item.logo ? "logo" : ""}`}><img src={item.logo ?? item.image} alt="" /></span><div><small>{directoryTypeLabel(item.type)}{item.distance > 0 ? ` · ${item.distance} km` : " · Online"}</small><b>{item.title}</b><p>{item.subtitle}</p><em>{item.tag}</em></div><ChevronRight size={18} /></button>)}{!visibleItems.length && <div className="search-empty category-empty"><span><Search size={23} /></span><h3>No matches in this filter</h3><p>Try another subcategory or clear your search.</p><button onClick={() => { setQuery(""); setSubcategory("All"); }}>Show all {category}</button></div>}</section>
+    </div>
+  );
+}
 
 function SearchView({ query, setQuery, filter, setFilter, sortBy, setSortBy, onOpen }: { query: string; setQuery: (value: string) => void; filter: string; setFilter: (value: string) => void; sortBy: SearchSort; setSortBy: (value: SearchSort) => void; onOpen: (item: DirectoryItem) => void }) {
   const filterGroups = ["All", "Partners", "Offers", "Go out", "Grow", "Rewards"];
@@ -657,7 +746,7 @@ function ListingDetail({ item, onBack, notify }: { item: DirectoryItem; onBack: 
   );
 }
 
-function WorkWithUs({ initialTrack, onBack, notify, appliedCampaigns, onToggleCampaign }: { initialTrack: WorkTrack; onBack: () => void; notify: (message: string) => void; appliedCampaigns: Set<string>; onToggleCampaign: (campaignId: string) => void }) {
+function WorkWithUs({ initialTrack, onBack, onEarnings, notify, appliedCampaigns, onToggleCampaign }: { initialTrack: WorkTrack; onBack: () => void; onEarnings: () => void; notify: (message: string) => void; appliedCampaigns: Set<string>; onToggleCampaign: (campaignId: string) => void }) {
   const [track, setTrack] = useState<WorkTrack>(initialTrack);
   const [interest, setInterest] = useState<Set<string>>(() => new Set());
   const campaigns = [
@@ -672,7 +761,12 @@ function WorkWithUs({ initialTrack, onBack, notify, appliedCampaigns, onToggleCa
       <button className="inline-back" onClick={onBack}><ArrowLeft size={18} /> Back</button>
       <header className="work-header"><p className="eyebrow coral-text">WORK WITH KOUPONLY</p><h2>Make your next move.</h2><p>Create for brands, learn sales, grow campaigns or represent your campus.</p></header>
       <div className="work-tabs"><button className={track === "creator" ? "active" : ""} onClick={() => setTrack("creator")}>Creator</button><button className={track === "bd" ? "active" : ""} onClick={() => setTrack("bd")}>BD & Sales</button><button className={track === "marketing" ? "active" : ""} onClick={() => setTrack("marketing")}>Marketing</button><button className={track === "campus" ? "active" : ""} onClick={() => setTrack("campus")}>Campus</button></div>
-      {track === "creator" ? <><section className="creator-accepted"><span><Check size={20} /></span><div><small>YOU&apos;RE AN APPROVED CREATOR</small><b>Choose campaigns that fit your style</b><p>Apply only to the briefs you genuinely want to make.</p></div></section><section className="creator-process"><h3>How creator work gets paid</h3><div><span><b>1</b><small>Pick & apply</small></span><i /><span><b>2</b><small>Receive or visit</small></span><i /><span><b>3</b><small>Create & submit</small></span><i /><span><b>4</b><small>Post & get paid</small></span></div><p>After approval, the brand sends a package or schedules a store visit. You make the video, send it for approval, post it and give Kouponly the final file. Payment is then released.</p></section><section className="campaign-section"><div className="section-heading"><div><p className="eyebrow teal-text">AVAILABLE NOW</p><h3>Pick a campaign</h3></div><span>{campaigns.length}</span></div><div className="campaign-list">{campaigns.map((campaign) => { const applied = appliedCampaigns.has(campaign.id); return <article key={campaign.id}><img src={campaign.image} alt="" /><div><small>{campaign.brand} · {campaign.method}</small><b>{campaign.title}</b><p>{campaign.deadline}</p><span>{campaign.pay}</span><button className={applied ? "applied" : ""} onClick={() => { onToggleCampaign(campaign.id); notify(applied ? "Campaign application withdrawn" : `Applied to ${campaign.brand}`); }}>{applied ? <><Check size={15} /> Applied</> : "View brief & apply"}</button></div></article>; })}</div></section></> : <section className={`internship-detail ${track === "campus" ? "campus-detail" : ""}`}><img src={role.image} alt="" /><p className="eyebrow coral-text">{role.eyebrow}</p><h3>{role.title}</h3><p>{role.copy}</p>{track === "campus" && <div className="gold-card"><span>KOUPONLY</span><b>GOLD</b><small>Free food · Free experiences · Member extras</small></div>}<div>{role.points.map((point) => <span key={point}><Check size={16} />{point}</span>)}</div><button className={interest.has(track) ? "applied" : ""} onClick={() => toggleInterest(track)}>{interest.has(track) ? <><Check size={17} /> Interest sent</> : <>{track === "campus" ? "Apply to represent campus" : "Show interest"} <ArrowRight size={17} /></>}</button></section>}
+      {track === "creator" ? <>
+        <section className="creator-accepted"><span><Check size={20} /></span><div><small>YOU&apos;RE AN APPROVED CREATOR</small><b>Choose campaigns that fit your style</b><p>Apply only to the briefs you genuinely want to make.</p></div></section>
+        <button className="creator-earnings-card" onClick={onEarnings}><span><WalletCards size={21} /></span><div><small>CREATOR EARNINGS</small><b>₹12,500 earned</b><p>₹6,000 payout processing</p></div><ChevronRight size={18} /></button>
+        <section className="creator-process"><h3>How creator work gets paid</h3><div><span><b>1</b><small>Pick & apply</small></span><i /><span><b>2</b><small>Receive or visit</small></span><i /><span><b>3</b><small>Create & submit</small></span><i /><span><b>4</b><small>Post & get paid</small></span></div><p>After approval, the brand sends a package or schedules a store visit. You make the video, send it for approval, post it and give Kouponly the final file. Payment is then released.</p></section>
+        <section className="campaign-section"><div className="section-heading"><div><p className="eyebrow teal-text">AVAILABLE NOW</p><h3>Pick a campaign</h3></div><span>{campaigns.length}</span></div><div className="campaign-list">{campaigns.map((campaign) => { const applied = appliedCampaigns.has(campaign.id); return <article key={campaign.id}><img src={campaign.image} alt="" /><div><small>{campaign.brand} · {campaign.method}</small><b>{campaign.title}</b><p>{campaign.deadline}</p><span>{campaign.pay}</span><button className={applied ? "applied" : ""} onClick={() => { onToggleCampaign(campaign.id); notify(applied ? "Campaign application withdrawn" : `Applied to ${campaign.brand}`); }}>{applied ? <><Check size={15} /> Applied</> : "View brief & apply"}</button></div></article>; })}</div></section>
+      </> : <section className={`internship-detail ${track === "campus" ? "campus-detail" : ""}`}><img src={role.image} alt="" /><p className="eyebrow coral-text">{role.eyebrow}</p><h3>{role.title}</h3><p>{role.copy}</p>{track === "campus" && <div className="gold-card"><span>KOUPONLY</span><b>GOLD</b><small>Free food · Free experiences · Member extras</small></div>}<div>{role.points.map((point) => <span key={point}><Check size={16} />{point}</span>)}</div><button className={interest.has(track) ? "applied" : ""} onClick={() => toggleInterest(track)}>{interest.has(track) ? <><Check size={17} /> Interest sent</> : <>{track === "campus" ? "Apply to represent campus" : "Show interest"} <ArrowRight size={17} /></>}</button></section>}
     </div>
   );
 }
@@ -719,6 +813,7 @@ function Profile({ notify, appliedCampaigns, onCreatorHub, onAccount }: { notify
   const menu = [
     { icon: UserRound, label: "Personal details", page: "personal" as AccountPageKey },
     { icon: BadgePercent, label: "Savings activity", page: "savings" as AccountPageKey },
+    { icon: WalletCards, label: "Creator earnings", page: "earnings" as AccountPageKey },
     { icon: Trophy, label: "Rewards & giveaways", page: null },
     { icon: TicketPercent, label: "Membership", page: "membership" as AccountPageKey },
     { icon: Gift, label: "Gifts", page: "gifts" as AccountPageKey },
@@ -730,7 +825,7 @@ function Profile({ notify, appliedCampaigns, onCreatorHub, onAccount }: { notify
     <div className="profile-screen">
       <div className="profile-hero"><div className="profile-top"><p className="eyebrow">YOUR SPACE</p><button aria-label="Settings" onClick={() => onAccount("settings")}><Settings size={19} /></button></div><div className="avatar">NJ<span /></div><h2>Neil Jose Pillard</h2><p>neil.j.pillard@gmail.com</p><div className="profile-stats"><span><b>₹2,400</b><small>saved this month</small></span><i /><span><b>8</b><small>offers enjoyed</small></span></div></div>
       <div className="streak-card"><span className="streak-icon">6</span><div><small>MONTHLY STREAK</small><b>You’re on a roll</b><p>One more saving to beat July.</p></div><ChevronRight size={18} /></div>
-      <button className="creator-status-card" onClick={onCreatorHub}><span className="creator-avatar"><Clapperboard size={22} /></span><span><small>KOUPONLY CREATOR · ACCEPTED</small><b>3 campaigns are ready for you</b><p>{appliedCampaigns.size ? `${appliedCampaigns.size} application${appliedCampaigns.size === 1 ? "" : "s"} in progress` : "Pick the briefs that fit your style."}</p></span><ChevronRight size={18} /></button>
+      <button className="creator-status-card" onClick={onCreatorHub}><span className="creator-avatar"><Clapperboard size={22} /></span><span><small>KOUPONLY CREATOR · ACCEPTED</small><b>₹12,500 earned · 3 campaigns ready</b><p>{appliedCampaigns.size ? `${appliedCampaigns.size} application${appliedCampaigns.size === 1 ? "" : "s"} in progress` : "Pick the briefs that fit your style."}</p></span><ChevronRight size={18} /></button>
       <button className="profile-rewards-card" onClick={() => setView("rewards")}>
         <span className="profile-rewards-icon"><Trophy size={22} /></span>
         <span className="profile-rewards-copy"><small>REWARDS & GIVEAWAYS</small><b>680 points · Free spin ready</b><p>Play, collect points and win free stuff.</p></span>
